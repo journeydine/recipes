@@ -99,10 +99,17 @@
     }
     .hero-bg {
       position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      filter: brightness(0.35) saturate(0.7);
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(74,157,156,0.05) 0%, transparent 60%),
-        var(--bg);
+        linear-gradient(to bottom, rgba(14,13,11,0.45) 0%, rgba(14,13,11,0.1) 40%, rgba(14,13,11,0.1) 60%, rgba(14,13,11,0.85) 100%),
+        radial-gradient(ellipse 70% 50% at 50% 50%, transparent 40%, rgba(14,13,11,0.4) 100%);
     }
     .hero-line {
       position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
@@ -196,39 +203,7 @@
     }
     .intro-card-val { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--gold); }
 
-    /* ── RECIPE PHOTO ── */
-    .recipe-photo { background: var(--bg); padding: 0 2rem 6rem; }
-    .recipe-photo-inner {
-      position: relative; max-width: 760px; margin: 0 auto; overflow: hidden;
-      box-shadow: 0 0 0 1px rgba(201,168,76,0.13);
-    }
-    .recipe-photo-inner img {
-      width: 100%; height: 520px;
-      object-fit: cover; object-position: center center;
-      display: block;
-      filter: brightness(0.93) contrast(1.05) saturate(0.92);
-      transition: transform 1.2s ease, filter 0.8s ease;
-    }
-    .recipe-photo-inner:hover img {
-      transform: scale(1.03);
-      filter: brightness(0.88) contrast(1.08) saturate(1.0);
-    }
-    .photo-caption {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 5rem 2rem 1.6rem;
-      background: linear-gradient(to top, rgba(14,13,11,0.88) 0%, rgba(14,13,11,0.2) 70%, transparent 100%);
-      display: flex; align-items: flex-end; justify-content: space-between;
-      z-index: 1;
-    }
-    .photo-caption-text {
-      font-family: var(--serif); font-size: 1rem; font-style: italic;
-      font-weight: 300; color: rgba(240,234,216,0.75); letter-spacing: 0.02em;
-    }
-    .photo-caption-tag {
-      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.15em;
-      color: var(--gold); text-transform: uppercase; opacity: 0.6;
-      white-space: nowrap; margin-left: 2rem;
-    }
+    /* photo moved to hero */
 
     /* ── INGREDIENTS ── */
     .ingredients { background: var(--bg); }
@@ -404,7 +379,7 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg"></div>
+    <div class="hero-bg" style="background-image: url('IMG_2060.jpg');"></div>
     <div class="hero-line"></div>
     <div class="hero-eyebrow">Recipe No. 001</div>
     <h1 class="hero-title">
@@ -478,16 +453,7 @@
     </div>
   </section>
 
-  <!-- PHOTO -->
-  <div class="recipe-photo reveal">
-    <div class="recipe-photo-inner">
-      <img src="IMG_2060.jpg" alt="Paneer Roll being assembled — Journey &amp; Dine" />
-      <div class="photo-caption">
-        <span class="photo-caption-text">The moment before the roll. Every layer placed with intent.</span>
-        <span class="photo-caption-tag">Journey &amp; Dine</span>
-      </div>
-    </div>
-  </div>
+
 
   <!-- INGREDIENTS -->
   <section class="ingredients">
