@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paneer Roll — Journey & Dine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: rgba(201, 168, 76, 0.15);
+      --teal: #4a9d9c;
+      --teal-light: #6bbfbe;
+      --teal-dim: rgba(74, 157, 156, 0.12);
+      --bg: #0e0d0b;
+      --bg2: #141310;
+      --bg3: #1a1916;
+      --surface: #201f1c;
+      --text: #f0ead8;
+      --text-muted: #8a8070;
+      --text-dim: #5a5448;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Jost', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    .cursor {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--gold); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+    .cursor-ring {
+      position: fixed; width: 32px; height: 32px;
+      border: 1px solid rgba(201,168,76,0.4); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.25s ease;
+    }
+
+    /* ── NOISE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(14,13,11,0.95) 0%, transparent 100%);
+      transition: backdrop-filter 0.4s ease, background 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(14,13,11,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo { display: flex; align-items: center; gap: 6px; }
+    .nav-logo svg { width: 28px; height: 28px; }
+    .nav-name {
+      font-family: var(--serif); font-size: 1.15rem; font-weight: 500;
+      color: var(--text); letter-spacing: 0.04em;
+    }
+    .nav-name span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em;
+      color: var(--text-muted); text-decoration: none; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 6rem 2rem 4rem;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(74,157,156,0.05) 0%, transparent 60%),
+        var(--bg);
+    }
+    .hero-line {
+      position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.15) 30%, rgba(201,168,76,0.15) 70%, transparent);
+      transform: translateX(-50%);
+    }
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.22em;
+      color: var(--teal); text-transform: uppercase; margin-bottom: 2rem;
+      position: relative; display: flex; align-items: center; gap: 1rem;
+      opacity: 0; animation: fadeUp 0.8s 0.3s forwards ease;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; display: block; width: 40px; height: 1px;
+      background: var(--teal); opacity: 0.5;
+    }
+    .hero-title {
+      font-family: var(--serif); font-size: clamp(4rem, 11vw, 9rem);
+      font-weight: 300; line-height: 0.92; text-align: center;
+      letter-spacing: -0.01em; position: relative;
+      opacity: 0; animation: fadeUp 1s 0.5s forwards ease;
+    }
+    .hero-title .line1 { display: block; font-style: italic; color: var(--text); }
+    .hero-title .line2 { display: block; color: var(--gold); font-style: normal; font-weight: 500; }
+    .hero-meta {
+      display: flex; align-items: center; gap: 3rem; margin-top: 3rem;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards ease;
+    }
+    .hero-meta-item { text-align: center; }
+    .hero-meta-value {
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 300;
+      color: var(--gold); display: block;
+    }
+    .hero-meta-label {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em;
+      color: var(--text-muted); text-transform: uppercase; margin-top: 0.25rem;
+    }
+    .hero-meta-divider { width: 1px; height: 40px; background: var(--text-dim); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0; animation: fadeUp 0.8s 1.2s forwards ease;
+    }
+    .hero-scroll span {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.18em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── SHARED ── */
+    section { position: relative; padding: 6rem 2rem; }
+    .container { max-width: 820px; margin: 0 auto; }
+    .container-wide { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.2em;
+      color: var(--teal); text-transform: uppercase; margin-bottom: 1.2rem;
+    }
+    .section-heading {
+      font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 300; line-height: 1.05; color: var(--text);
+    }
+    .section-heading em { color: var(--gold); font-style: italic; }
+
+    /* ── INTRO ── */
+    .intro { background: var(--bg2); }
+    .intro-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .intro-text p {
+      font-size: 1.05rem; line-height: 1.85; color: rgba(240,234,216,0.75); margin-top: 1.5rem;
+    }
+    .intro-text p + p { margin-top: 1rem; }
+    .intro-card {
+      background: var(--surface); border: 1px solid rgba(201,168,76,0.12);
+      padding: 2.5rem; position: relative;
+    }
+    .intro-card::before {
+      content: ''; position: absolute; top: -1px; left: 2rem; right: 2rem;
+      height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .intro-card-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .intro-card-row:last-child { border-bottom: none; }
+    .intro-card-key {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .intro-card-val { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--gold); }
+
+    /* ── RECIPE PHOTO ── */
+    .recipe-photo { background: var(--bg); padding: 0 0 6rem; }
+    .recipe-photo-inner {
+      position: relative; max-width: 900px; margin: 0 auto; overflow: hidden;
+    }
+    .recipe-photo-inner img {
+      width: 100%; height: 600px;
+      object-fit: cover; object-position: center 25%;
+      display: block;
+      filter: brightness(0.9) contrast(1.06) saturate(0.9);
+      transition: transform 1s ease, filter 0.8s ease;
+    }
+    .recipe-photo-inner:hover img {
+      transform: scale(1.025);
+      filter: brightness(0.85) contrast(1.1) saturate(1.0);
+    }
+    .photo-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 4rem 2.5rem 1.8rem;
+      background: linear-gradient(to top, rgba(14,13,11,0.9) 0%, rgba(14,13,11,0.3) 60%, transparent 100%);
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .photo-caption-text {
+      font-family: var(--serif); font-size: 1.05rem; font-style: italic;
+      font-weight: 300; color: rgba(240,234,216,0.8); letter-spacing: 0.02em;
+    }
+    .photo-caption-tag {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.15em;
+      color: var(--gold); text-transform: uppercase; opacity: 0.7;
+      white-space: nowrap; margin-left: 2rem;
+    }
+
+    /* ── INGREDIENTS ── */
+    .ingredients { background: var(--bg); }
+    .ingredients-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem; margin-top: 3.5rem;
+    }
+    .ingredient-group {
+      background: var(--bg3); border: 1px solid rgba(255,255,255,0.05);
+      padding: 2rem; position: relative; overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .ingredient-group:hover { border-color: rgba(201,168,76,0.2); transform: translateY(-3px); }
+    .ingredient-group::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--teal), var(--gold));
+      transform: scaleX(0); transition: transform 0.4s ease;
+    }
+    .ingredient-group:hover::after { transform: scaleX(1); }
+    .group-title {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em;
+      color: var(--teal); text-transform: uppercase; margin-bottom: 1.4rem;
+    }
+    .ingredient-list { list-style: none; }
+    .ingredient-list li {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.9rem;
+    }
+    .ingredient-list li:last-child { border-bottom: none; }
+    .ing-name { color: var(--text); font-weight: 300; }
+    .ing-qty {
+      font-family: var(--serif); font-size: 0.95rem; color: var(--gold);
+      font-style: italic; white-space: nowrap; margin-left: 1rem;
+    }
+
+    /* ── METHOD ── */
+    .method { background: var(--bg2); }
+    .steps { margin-top: 4rem; position: relative; }
+    .steps::before {
+      content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, var(--gold-dim), var(--teal-dim));
+    }
+    .step {
+      display: grid; grid-template-columns: 60px 1fr; gap: 2.5rem;
+      margin-bottom: 3.5rem;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .step.visible { opacity: 1; transform: translateY(0); }
+    .step-num-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg2); flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .step-num span { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--gold); }
+    .step-content { padding-top: 0.6rem; }
+    .step-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; color: var(--text); margin-bottom: 0.8rem; }
+    .step-title em { color: var(--gold); font-style: italic; }
+    .step-body { font-size: 0.95rem; line-height: 1.9; color: rgba(240,234,216,0.7); }
+    .step-tip {
+      margin-top: 1rem; padding: 0.9rem 1.2rem;
+      background: var(--teal-dim); border-left: 2px solid var(--teal);
+      font-family: var(--mono); font-size: 0.72rem; color: var(--teal-light); letter-spacing: 0.04em;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { display: flex; align-items: center; gap: 1.5rem; margin: 1rem 0 3.5rem; }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.2), transparent); }
+    .divider-symbol { font-family: var(--serif); font-size: 1.2rem; color: var(--gold); opacity: 0.5; }
+
+    /* ── NOTES ── */
+    .notes { background: var(--bg); }
+    .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .note-card { padding: 2rem; border: 1px solid rgba(255,255,255,0.05); background: var(--bg3); }
+    .note-icon { font-size: 1.4rem; margin-bottom: 1rem; display: block; }
+    .note-title { font-family: var(--serif); font-size: 1.1rem; color: var(--text); margin-bottom: 0.6rem; }
+    .note-text { font-size: 0.85rem; line-height: 1.7; color: var(--text-muted); }
+
+    /* ── CTA ── */
+    .cta-strip {
+      background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(74,157,156,0.06));
+      border-top: 1px solid rgba(201,168,76,0.12);
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+      padding: 4rem 2rem; text-align: center;
+    }
+    .cta-strip p {
+      font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-style: italic; color: var(--text); margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-block; padding: 0.9rem 2.5rem;
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.3s ease; cursor: none; margin: 0.4rem;
+    }
+    .btn-gold { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+    .btn-gold:hover { background: var(--gold); color: var(--bg); }
+    .btn-teal { background: transparent; border: 1px solid var(--teal); color: var(--teal); }
+    .btn-teal:hover { background: var(--teal); color: var(--bg); }
+    .btn-yt { background: transparent; border: 1px solid #c4302b; color: #c4302b; }
+    .btn-yt:hover { background: #c4302b; color: var(--bg); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 3rem 2rem; text-align: center;
+    }
+    .footer-brand { font-family: var(--serif); font-size: 1.3rem; font-weight: 300; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .footer-brand span { color: var(--gold); }
+    .footer-tagline { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+
+    /* ── PROGRESS BAR ── */
+    .reading-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 600; }
+    .reading-progress-bar { height: 100%; background: linear-gradient(to right, var(--teal), var(--gold)); width: 0%; transition: width 0.1s ease; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .intro-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .step { grid-template-columns: 48px 1fr; gap: 1.5rem; }
+      .steps::before { left: 20px; }
+      .hero-meta { gap: 1.5rem; }
+      .recipe-photo-inner img { height: 360px; object-position: center 20%; }
+      .photo-caption-tag { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <div class="reading-progress">
+    <div class="reading-progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round">
+            <line x1="10" y1="6" x2="10" y2="22"/>
+            <line x1="8" y1="6" x2="8" y2="12"/>
+            <line x1="12" y1="6" x2="12" y2="12"/>
+            <path d="M8 12 Q10 15 12 12"/>
+            <line x1="10" y1="22" x2="10" y2="34"/>
+          </g>
+          <circle cx="26" cy="20" r="9" stroke="#4a9d9c" stroke-width="1.2"/>
+          <circle cx="26" cy="20" r="1.5" fill="#4a9d9c"/>
+          <polygon points="26,12 28,20 26,18 24,20" fill="#c9a84c" opacity="0.9"/>
+          <polygon points="26,28 24,20 26,22 28,20" fill="#4a9d9c" opacity="0.5"/>
+        </svg>
+      </div>
+      <span class="nav-name">Journey <span>&</span> Dine</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="https://topmate.io/journey_and_dine" target="_blank">Plan with Us</a></li>
+      <li><a href="https://www.youtube.com/@Journey-dine" target="_blank">YouTube</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+    <div class="hero-eyebrow">Recipe No. 001</div>
+    <h1 class="hero-title">
+      <span class="line1">Paneer</span>
+      <span class="line2">Roll</span>
+    </h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-value">20</span>
+        <span class="hero-meta-label">Minutes</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-value">4</span>
+        <span class="hero-meta-label">Rolls</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-value">2</span>
+        <span class="hero-meta-label">Servings</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-value">★★★</span>
+        <span class="hero-meta-label">Skill</span>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll to cook</span>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="intro">
+    <div class="container">
+      <div class="intro-inner">
+        <div class="intro-text reveal">
+          <p class="section-eyebrow">The Story</p>
+          <h2 class="section-heading">Not a roll.<br><em>A full meal.</em></h2>
+          <p>This isn't café paneer roll. This is the version you make at 11pm after a long ride, when you have half a block of paneer and nothing else going on. Spiced hard, rolled tight, toasted until the wrap crackles.</p>
+          <p>Kitchen king masala does the heavy lifting here. The amchur brings a sharp tang that cuts through the richness of the paneer. The Greek yogurt cools everything down. Eat it while it's still warm enough to burn your fingers a little.</p>
+        </div>
+        <div class="intro-card reveal">
+          <div class="intro-card-row">
+            <span class="intro-card-key">Type</span>
+            <span class="intro-card-val">Wrap / Street Food</span>
+          </div>
+          <div class="intro-card-row">
+            <span class="intro-card-key">Cuisine</span>
+            <span class="intro-card-val">North Indian</span>
+          </div>
+          <div class="intro-card-row">
+            <span class="intro-card-key">Prep Time</span>
+            <span class="intro-card-val">10 minutes</span>
+          </div>
+          <div class="intro-card-row">
+            <span class="intro-card-key">Cook Time</span>
+            <span class="intro-card-val">10 minutes</span>
+          </div>
+          <div class="intro-card-row">
+            <span class="intro-card-key">Yield</span>
+            <span class="intro-card-val">4 rolls, 2 servings</span>
+          </div>
+          <div class="intro-card-row">
+            <span class="intro-card-key">Difficulty</span>
+            <span class="intro-card-val">Easy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTO -->
+  <div class="recipe-photo reveal">
+    <div class="recipe-photo-inner">
+      <img src="IMG_2060.jpg" alt="Paneer Roll being assembled — Journey &amp; Dine" />
+      <div class="photo-caption">
+        <span class="photo-caption-text">The moment before the roll. Every layer placed with intent.</span>
+        <span class="photo-caption-tag">Journey &amp; Dine</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INGREDIENTS -->
+  <section class="ingredients">
+    <div class="container-wide">
+      <div class="reveal">
+        <p class="section-eyebrow">What You Need</p>
+        <h2 class="section-heading">The <em>Ingredients</em></h2>
+      </div>
+      <div class="ingredients-grid">
+        <div class="ingredient-group reveal">
+          <p class="group-title">For the Filling</p>
+          <ul class="ingredient-list">
+            <li><span class="ing-name">Paneer, grated</span><span class="ing-qty">200 g</span></li>
+            <li><span class="ing-name">Garlic pods</span><span class="ing-qty">5 cloves</span></li>
+            <li><span class="ing-name">Onion, finely chopped</span><span class="ing-qty">2 medium</span></li>
+            <li><span class="ing-name">Green chillies, chopped</span><span class="ing-qty">2</span></li>
+            <li><span class="ing-name">Cumin seeds (jeera)</span><span class="ing-qty">1 tsp</span></li>
+            <li><span class="ing-name">Oil</span><span class="ing-qty">1 tbsp</span></li>
+          </ul>
+        </div>
+        <div class="ingredient-group reveal">
+          <p class="group-title">The Masala</p>
+          <ul class="ingredient-list">
+            <li><span class="ing-name">Kitchen King masala</span><span class="ing-qty">3 tsp</span></li>
+            <li><span class="ing-name">Red chilli powder</span><span class="ing-qty">1 tsp</span></li>
+            <li><span class="ing-name">Turmeric powder</span><span class="ing-qty">½ tsp</span></li>
+            <li><span class="ing-name">Amchur powder</span><span class="ing-qty">1 tsp</span></li>
+            <li><span class="ing-name">Salt</span><span class="ing-qty">to taste</span></li>
+            <li><span class="ing-name">Fresh coriander</span><span class="ing-qty">handful</span></li>
+          </ul>
+        </div>
+        <div class="ingredient-group reveal">
+          <p class="group-title">For the Roll</p>
+          <ul class="ingredient-list">
+            <li><span class="ing-name">Chapati / wrap / paratha</span><span class="ing-qty">4 pcs</span></li>
+            <li><span class="ing-name">Greek yogurt</span><span class="ing-qty">100 g</span></li>
+          </ul>
+        </div>
+        <div class="ingredient-group reveal">
+          <p class="group-title">The Crunch Layer</p>
+          <ul class="ingredient-list">
+            <li><span class="ing-name">Small onion, thinly sliced</span><span class="ing-qty">2</span></li>
+            <li><span class="ing-name">Tomato, julienned</span><span class="ing-qty">2 medium</span></li>
+            <li><span class="ing-name">Lemon</span><span class="ing-qty">1</span></li>
+            <li><span class="ing-name">Fresh coriander</span><span class="ing-qty">to taste</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section class="method">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow">How It's Done</p>
+        <h2 class="section-heading">The <em>Method</em></h2>
+      </div>
+      <div class="divider"><div class="divider-line"></div><span class="divider-symbol">◆</span><div class="divider-line"></div></div>
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>01</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>Build the base.</em> Aromatics first.</h3>
+            <p class="step-body">Heat a tablespoon of oil in a wide pan over medium-high heat. Once it shimmers, add the cumin seeds and let them pop and sputter for about 30 seconds — they should turn a shade darker and smell toasty, not burnt. Add the finely chopped garlic and let it roast until it turns golden at the edges. This takes about a minute. Don't rush it; this is where the flavour foundation is built.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>02</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>The onion-chilli base.</em> Patience pays here.</h3>
+            <p class="step-body">Add the chopped onions and green chillies into the pan. Toss to coat in the garlicky oil. Keep the heat at medium-high and cook, stirring occasionally, until the onions turn slightly brown at the edges — not caramelised, just colour with a little bite still left. This should take 5–6 minutes.</p>
+            <div class="step-tip">💡 Don't stir constantly. Let the onions sit and take some colour — that browning is flavour.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>03</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>Bloom the masalas.</em> One minute, high heat.</h3>
+            <p class="step-body">Turn the heat down slightly. Add the red chilli powder, kitchen king masala, turmeric, and amchur all at once. Toss quickly and stir the masalas into the onion base for about 60 seconds. The raw smell of the spices should give way to something toasty and complex. If it's sticking, a splash of water helps.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>04</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>Add the paneer.</em> Plus half the coriander.</h3>
+            <p class="step-body">Add the grated paneer to the pan along with half the coriander. Mix well so every strand of paneer is coated in the masala. Season generously with salt. Keep the heat medium and sauté for 2–3 minutes until the mixture turns aromatic and comes together. The texture should be loose and crumbly, not wet. Finish with the remaining coriander, toss once, and take off the heat.</p>
+            <div class="step-tip">💡 Grate the paneer fresh — pre-grated or crumbled doesn't absorb the masala the same way.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>05</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>Build the roll.</em> Every layer matters.</h3>
+            <p class="step-body">Lay a chapati or wrap flat. Spread a generous layer of Greek yogurt across the centre — this is your cooling agent and the glue that holds everything together. Add a few slices of raw onion, some julienned tomato, and a scatter of fresh coriander. Squeeze about a quarter of a lemon over the vegetables.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap"><div class="step-num"><span>06</span></div></div>
+          <div class="step-content">
+            <h3 class="step-title"><em>Fill and roll.</em> Then toast it.</h3>
+            <p class="step-body">Spoon a good portion of the paneer filling down the centre of the wrap. Roll it firmly — tight enough that it holds together, loose enough that it doesn't burst. Place seam-side down on a hot dry tawa over medium heat. Toast for about 1 minute per side until the exterior is lightly charred and crisp. Serve immediately while the outside still crackles.</p>
+            <div class="step-tip">💡 No butter needed on the tawa — the yogurt inside steams the roll while the dry heat crisps the outside. That contrast is the point.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="notes">
+    <div class="container-wide">
+      <div class="reveal">
+        <p class="section-eyebrow">Before You Cook</p>
+        <h2 class="section-heading">Things Worth <em>Knowing</em></h2>
+      </div>
+      <div class="notes-grid">
+        <div class="note-card reveal">
+          <span class="note-icon">🧀</span>
+          <h4 class="note-title">On the Paneer</h4>
+          <p class="note-text">Grate it rather than crumbling by hand. The finer texture means more surface area, which means every bit picks up the masala evenly. Fresh paneer also matters — frozen tends to release water and make the filling soggy.</p>
+        </div>
+        <div class="note-card reveal">
+          <span class="note-icon">🌶️</span>
+          <h4 class="note-title">Adjusting the Heat</h4>
+          <p class="note-text">Three teaspoons of Kitchen King plus one of red chilli is a warm, assertive heat — not painful. If you're going mild, drop the chilli powder to half a teaspoon. If you want more fire, add an extra green chilli rather than more powder.</p>
+        </div>
+        <div class="note-card reveal">
+          <span class="note-icon">🍋</span>
+          <h4 class="note-title">The Amchur Matters</h4>
+          <p class="note-text">Dry mango powder brings a sharp citrus note that makes the whole roll taste brighter. Don't skip it. If you don't have amchur, a squeeze of lemon directly into the filling works as a substitute, but add it after you take it off heat.</p>
+        </div>
+        <div class="note-card reveal">
+          <span class="note-icon">🫓</span>
+          <h4 class="note-title">Chapati vs Paratha</h4>
+          <p class="note-text">Chapati keeps it light. Paratha makes it indulgent. Either works — but if you're using store-bought wraps, warm them first on the tawa before assembling or they'll crack when you roll them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-strip reveal">
+    <p>"Adventures on our plate and map."</p>
+    <a href="https://topmate.io/journey_and_dine" target="_blank" class="btn btn-gold">Plan a Trip with Us</a>
+    <a href="https://instagram.com/journey_and_dine" target="_blank" class="btn btn-teal">Follow on Instagram</a>
+    <a href="https://www.youtube.com/@Journey-dine" target="_blank" class="btn btn-yt">Subscribe on YouTube</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-brand">Journey <span>&</span> Dine</p>
+    <p class="footer-tagline">Adventures on our plate and map · Recipes you can cook · Trips you can try</p>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Nav + progress
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    // Scroll reveals
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal, .step').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
