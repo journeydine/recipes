@@ -197,34 +197,36 @@
     .intro-card-val { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--gold); }
 
     /* ── RECIPE PHOTO ── */
-    .recipe-photo { background: var(--bg); padding: 0 0 6rem; }
+    .recipe-photo { background: var(--bg); padding: 0 2rem 6rem; }
     .recipe-photo-inner {
-      position: relative; max-width: 900px; margin: 0 auto; overflow: hidden;
+      position: relative; max-width: 760px; margin: 0 auto; overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(201,168,76,0.13);
     }
     .recipe-photo-inner img {
-      width: 100%; height: 600px;
-      object-fit: cover; object-position: center 25%;
+      width: 100%; height: 520px;
+      object-fit: cover; object-position: center center;
       display: block;
-      filter: brightness(0.9) contrast(1.06) saturate(0.9);
-      transition: transform 1s ease, filter 0.8s ease;
+      filter: brightness(0.93) contrast(1.05) saturate(0.92);
+      transition: transform 1.2s ease, filter 0.8s ease;
     }
     .recipe-photo-inner:hover img {
-      transform: scale(1.025);
-      filter: brightness(0.85) contrast(1.1) saturate(1.0);
+      transform: scale(1.03);
+      filter: brightness(0.88) contrast(1.08) saturate(1.0);
     }
     .photo-caption {
       position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 4rem 2.5rem 1.8rem;
-      background: linear-gradient(to top, rgba(14,13,11,0.9) 0%, rgba(14,13,11,0.3) 60%, transparent 100%);
+      padding: 5rem 2rem 1.6rem;
+      background: linear-gradient(to top, rgba(14,13,11,0.88) 0%, rgba(14,13,11,0.2) 70%, transparent 100%);
       display: flex; align-items: flex-end; justify-content: space-between;
+      z-index: 1;
     }
     .photo-caption-text {
-      font-family: var(--serif); font-size: 1.05rem; font-style: italic;
-      font-weight: 300; color: rgba(240,234,216,0.8); letter-spacing: 0.02em;
+      font-family: var(--serif); font-size: 1rem; font-style: italic;
+      font-weight: 300; color: rgba(240,234,216,0.75); letter-spacing: 0.02em;
     }
     .photo-caption-tag {
-      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.15em;
-      color: var(--gold); text-transform: uppercase; opacity: 0.7;
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.15em;
+      color: var(--gold); text-transform: uppercase; opacity: 0.6;
       white-space: nowrap; margin-left: 2rem;
     }
 
@@ -360,7 +362,7 @@
       .step { grid-template-columns: 48px 1fr; gap: 1.5rem; }
       .steps::before { left: 20px; }
       .hero-meta { gap: 1.5rem; }
-      .recipe-photo-inner img { height: 360px; object-position: center 20%; }
+      .recipe-photo { padding: 0 1rem 4rem; } .recipe-photo-inner img { height: 400px; object-position: center center; } .photo-caption-tag { display: none; }
       .photo-caption-tag { display: none; }
     }
   </style>
@@ -513,6 +515,7 @@
             <li><span class="ing-name">Red chilli powder</span><span class="ing-qty">1 tsp</span></li>
             <li><span class="ing-name">Turmeric powder</span><span class="ing-qty">½ tsp</span></li>
             <li><span class="ing-name">Amchur powder</span><span class="ing-qty">1 tsp</span></li>
+            <li><span class="ing-name">Kasuri methi (dried fenugreek)</span><span class="ing-qty">1 tsp</span></li>
             <li><span class="ing-name">Salt</span><span class="ing-qty">to taste</span></li>
             <li><span class="ing-name">Fresh coriander</span><span class="ing-qty">handful</span></li>
           </ul>
@@ -568,7 +571,7 @@
           <div class="step-num-wrap"><div class="step-num"><span>03</span></div></div>
           <div class="step-content">
             <h3 class="step-title"><em>Bloom the masalas.</em> One minute, high heat.</h3>
-            <p class="step-body">Turn the heat down slightly. Add the red chilli powder, kitchen king masala, turmeric, and amchur all at once. Toss quickly and stir the masalas into the onion base for about 60 seconds. The raw smell of the spices should give way to something toasty and complex. If it's sticking, a splash of water helps.</p>
+            <p class="step-body">Turn the heat down slightly. Add the red chilli powder, kitchen king masala, turmeric, amchur, and kasuri methi all at once. Crush the kasuri methi between your palms before it goes in — it releases a lot more flavour that way. Toss quickly and stir the masalas into the onion base for about 60 seconds. The raw smell of the spices should give way to something toasty and complex. If it's sticking, a splash of water helps.</p>
           </div>
         </div>
 
